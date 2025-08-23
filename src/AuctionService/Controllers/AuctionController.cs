@@ -6,6 +6,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Contracts;
 using MassTransit;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -60,27 +61,30 @@ namespace AuctionService.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<AuctionDto>> CreateAuction(CreateAuctionDto auctionDto)
         {
             var auction = _mapper.Map<Auction>(auctionDto);
 
             //ToDO add current seller 
-            auction.Seller = "Test";
+            auction.Seller = User.Identity.Name;
             _context.Add(auction);
 
-         // publish to rabbitMq as createdAuction
+            // publish to rabbitMq as createdAuction
             var newAuction = _mapper.Map<AuctionDto>(auction);
             await _publishEndpoint.Publish(_mapper.Map<AuctionCreated>(newAuction));
 
             var result = await _context.SaveChangesAsync() > 0;
 
-           
+
 
             if (!result) return BadRequest("Couldn't sava the auction to the DB!");
 
             return CreatedAtAction(nameof(GetAuctionById), new { auction.Id }, newAuction);
         }
+
         [HttpPut("{id}")]
+         [Authorize]
         public async Task<ActionResult> UpdateAuction(Guid id, UpdateAuctionDto updateAuctionDto)
         {
             var auction = await _context.Auctions.Include(x => x.Item)
@@ -89,6 +93,7 @@ namespace AuctionService.Controllers
             if (auction == null) return NotFound();
 
             //TODO: match the user with lggedin user
+            if (auction.Seller != User.Identity.Name) return Unauthorized("Not authorized to perform the action dude ❌");
 
             auction.Item.Make = updateAuctionDto.Make ?? auction.Item.Make;
             auction.Item.Model = updateAuctionDto.Model ?? auction.Item.Model;
@@ -111,16 +116,18 @@ namespace AuctionService.Controllers
         }
 
         [HttpDelete("{id}")]
+         [Authorize]
         public async Task<ActionResult> DeleteAuction(Guid id)
         {
             var auction = await _context.Auctions.FirstOrDefaultAsync(x => x.Id == id);
 
             if (auction == null) return NotFound("Not able to find auction to delete!");
             //TODO: seller == user
+            if (auction.Seller != User.Identity.Name) return Forbid("Not authorized to perform the action dude ❌");
 
             _context.Remove(auction);
 
-            await _publishEndpoint.Publish<AuctionDeleted>(new { Id = auction.Id.ToString()});
+            await _publishEndpoint.Publish<AuctionDeleted>(new { Id = auction.Id.ToString() });
 
             var result = await _context.SaveChangesAsync() > 0;
             if (!result) return BadRequest("Error happened 😁");
