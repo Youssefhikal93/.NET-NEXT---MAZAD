@@ -1,11 +1,16 @@
 import { Button, ButtonGroup } from "flowbite-react";
+import { useParamsStore } from "../hooks/useParamsStore";
 
-type Props = {
-    pageSize: number;
-    setPageSize:(pageSize:number)=>void;
-}
+// type Props = {
+//     pageSize: number;
+//     setPageSize:(pageSize:number)=>void;
+// }
 const pageSizeButtons = [4,8,12]
-export default function Filter({pageSize,setPageSize}:Props) {
+export default function Filter() {
+
+    const pageSize = useParamsStore(state=>state.pageSize);
+    const setParams = useParamsStore(state=>state.setParams)
+
   return (
     <div className="flex justify-between items-center mb-4">
      <div>
@@ -13,7 +18,7 @@ export default function Filter({pageSize,setPageSize}:Props) {
                 <ButtonGroup outline>
                     {pageSizeButtons.map((el, i) => (
                         <Button key={i}
-                            onClick={() => setPageSize(el)}
+                            onClick={() => setParams({pageSize:el})}
                             color={`${pageSize === el ? 'red' : 'gray'}`}
                             className='focus:ring-0'
                         >
