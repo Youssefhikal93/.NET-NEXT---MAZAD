@@ -26,6 +26,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             session.user.username= token.username
         }
         return session
-    }
+    },
+    authorized: async ({ auth }) => {
+      // Logged in users are authenticated, otherwise redirect to login page
+      return !!auth
+    },
   }
 })

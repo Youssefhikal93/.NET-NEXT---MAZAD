@@ -19,7 +19,7 @@ export default function Search() {
     }
 
   return (
-        <div className='flex w-full items-center border-0 rounded-full py-2 shadow-sm'>
+        <div className='flex w-fit items-center border-0 rounded-full py-2 shadow-sm'>
             <input
             onKeyDown={(e)=> {
                 if(e.key === "Enter"){

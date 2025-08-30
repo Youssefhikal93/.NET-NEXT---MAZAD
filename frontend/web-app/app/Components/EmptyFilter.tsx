@@ -1,4 +1,5 @@
-import { useParams } from "next/navigation";
+"use client"
+import { signIn } from "next-auth/react";
 import { useParamsStore } from "../hooks/useParamsStore";
 import Heading from "./Heading";
 import { Button } from "flowbite-react";
@@ -7,11 +8,15 @@ type Props = {
     title?: string;
     subtitle?:string;
     showReset?:boolean;
+    showLogin?:boolean;
+    callbackUrl?: string
 }
 export default function EmptyFilter({
 title="No matches for this filter",
 subtitle="Try changing the filter or the search term",
-showReset
+showReset,
+showLogin,
+callbackUrl
 }:Props) {
 
     const reset = useParamsStore(state=>state.reset);
@@ -22,6 +27,10 @@ showReset
 
       {showReset && 
       <Button color="red" outline onClick={reset}>Remove Filters
+      
+      </Button> }
+      {showLogin && 
+      <Button color="red" outline onClick={()=>signIn("id-server",{redirectTo:callbackUrl})}>Login
       
       </Button> }
       </div>
