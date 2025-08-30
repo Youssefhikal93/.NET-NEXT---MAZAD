@@ -1,5 +1,5 @@
 "use client";
-import { IAuction, pagedResult } from "@/types";
+import { IAuction, pagedResult } from "@/app/types/types";
 import AuctionCard from "./AuctionCard";
 import AppPagination from "../Components/AppPagination";
 import { getAuctions } from "@/app/_lib/actions/auctions";

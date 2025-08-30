@@ -1,7 +1,7 @@
 import Link from "next/link"
 import CountDownTimer from "./CountDownTimer"
 import CardImage from "./CardImage"
-import { IAuction } from "@/types"
+import { IAuction } from "@/app/types/types"
 
 type Props= {
     auction:IAuction

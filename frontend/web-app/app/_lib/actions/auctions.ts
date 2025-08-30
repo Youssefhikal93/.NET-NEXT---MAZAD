@@ -1,5 +1,5 @@
 "use server";
-import { IAuction, pagedResult } from "@/types";
+import { IAuction, pagedResult } from "@/app/types/types";
 
 export async function getAuctions(query: string): Promise<pagedResult<IAuction>> {
     const res = await fetch(`http://localhost:6001/search${query}`);

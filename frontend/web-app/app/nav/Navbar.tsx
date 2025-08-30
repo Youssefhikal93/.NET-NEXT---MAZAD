@@ -1,4 +1,3 @@
-import { AiOutlineCar } from "react-icons/ai";
 import Search from "./Search";
 import Logo from "./Logo";
 import LoginButton from "./LoginButton";

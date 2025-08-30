@@ -1,5 +1,5 @@
 "use client"
-import { IAuction } from "@/types"
+import { IAuction } from "@/app/types/types"
 import Image from "next/image"
 import { useState } from "react"
 
