@@ -1,4 +1,3 @@
-import { truncate } from "fs";
 import { create } from "zustand";
 
 type State = {
@@ -6,6 +5,8 @@ type State = {
     pageSize:number;
     pageCount:number;
     searchTerm: string; 
+    orderBy:string;
+    filterBy:string;
 }
 type Actions = {
     setParams:(params:Partial<State>)=>void;
@@ -13,10 +14,12 @@ type Actions = {
 }
 
 const initialState: State ={
-     pageNumber:1,
+    pageNumber:1,
     pageSize:12,
     pageCount:1,
-    searchTerm: "string"
+    searchTerm: "",
+    orderBy:"make",
+    filterBy:"live"
 }
 
 export const useParamsStore = create<State & Actions>((set)=>(

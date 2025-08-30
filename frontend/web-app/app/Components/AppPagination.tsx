@@ -14,8 +14,8 @@ export default function AppPagination({currentPage,pageCount,OnpageChanged}:Prop
     <div>
       <Pagination 
       currentPage={currentPage} 
-      totalPages={pageCount} 
-      onPageChange={e=>OnpageChanged(e)} 
+    totalPages={pageCount > 0 ? pageCount : 1}   // API return 0          
+    onPageChange={e=>OnpageChanged(e)} 
     //   onPageChange={onPageChange}
       showIcons={true}
       layout="pagination"

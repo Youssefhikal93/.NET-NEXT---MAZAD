@@ -8,19 +8,20 @@ import Filter from "./Filter";
 import { useParamsStore } from "../hooks/useParamsStore";
 import { useShallow } from "zustand/shallow";
 import queryString from "query-string";
+import EmptyFilter from "../Components/EmptyFilter";
 
 
 
 
 export default  function Listings() {
     const [data,setData]=useState<pagedResult<IAuction>>();
-    // const [pageCount,setPageCount]=useState(1);
-    // const [pageNumber,setPageNumber]=useState(1);
-    // const [pageSize,setPageSize]=useState(4);
+
   const params = useParamsStore(useShallow( state=>({
     pageNumber:state.pageNumber,
     pageSize:state.pageSize,
-    searTerm:state.searchTerm
+    searchTerm:state.searchTerm,
+    orderBy: state.orderBy,
+    filterBy: state.filterBy
   })));
   const setParams = useParamsStore(state=>state.setParams)
   const url = queryString.stringifyUrl({url:"",query:params},{skipEmptyString:true})
@@ -43,6 +44,8 @@ export default  function Listings() {
   return (
     <>
     <Filter />
+    {data.totalCount===0 ?  <EmptyFilter showReset/> :
+    
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       { data &&
         data.results.map((auction:IAuction)=> 
@@ -50,6 +53,8 @@ export default  function Listings() {
       )
     }
     </div>
+    }
+
     <div className="flex justify-center align-center">
       <AppPagination  OnpageChanged={setPageNumber}  pageCount={data.pageCount} currentPage={params.pageNumber}/>
     </div>
