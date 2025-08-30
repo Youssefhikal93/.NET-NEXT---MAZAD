@@ -7,7 +7,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
      DuendeIDS6Provider({
     id:"id-server",
     clientId: "nextApp",
-    clientSecret: "secret",
+    clientSecret: "ASecret",
     issuer: "http://localhost:5001",
     authorization:{params:{scope: "openid profile auctionApp"}},
     idToken:true
