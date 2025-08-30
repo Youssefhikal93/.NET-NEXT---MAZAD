@@ -19,11 +19,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if(profile){
             token.username=profile.username
         }
+        if(account && account.access_token){
+          token.accessToken = account.access_token
+        }
         return token; 
     },
     async session({session,token}){
         if(token){
             session.user.username= token.username
+            session.accessToken = token.accessToken
         }
         return session
     },
