@@ -41,7 +41,8 @@ public static class Config
                AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
                RequirePkce = false,
                AllowOfflineAccess=true,
-               AccessTokenLifetime = 3600*24*7
+               AccessTokenLifetime = 3600*24*7,
+               AlwaysIncludeUserClaimsInIdToken=true
             }
         };
 }
