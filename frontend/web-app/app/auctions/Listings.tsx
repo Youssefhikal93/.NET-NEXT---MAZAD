@@ -2,7 +2,7 @@
 import { IAuction, pagedResult } from "@/types";
 import AuctionCard from "./AuctionCard";
 import AppPagination from "../Components/AppPagination";
-import { getAuctions } from "@/_lib/actions/auctions";
+import { getAuctions } from "@/app/_lib/actions/auctions";
 import { useEffect, useState } from "react";
 import Filter from "./Filter";
 import { useParamsStore } from "../hooks/useParamsStore";
