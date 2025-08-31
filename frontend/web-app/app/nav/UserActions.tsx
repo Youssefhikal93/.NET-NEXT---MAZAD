@@ -37,7 +37,7 @@ export default function UserActions({user}:Props) {
           Auctions won
         </DropdownItem>
           <DropdownItem icon={AiFillCar}>
-        <Link href="/auction/create">
+        <Link href="/auctions/create">
           Sell my car
         </Link>
         </DropdownItem>
