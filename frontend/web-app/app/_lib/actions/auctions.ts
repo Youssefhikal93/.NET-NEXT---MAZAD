@@ -2,12 +2,29 @@
 import { IAuction, pagedResult } from "@/app/types/types";
 
 import { fetchWrapper } from "../fetchWrapper";
+import { FieldValues } from "react-hook-form";
 
 
 
 export async function getAuctions(query: string): Promise<pagedResult<IAuction>> {
    return fetchWrapper.get(`search${query}`)
 }
+
+export async function createAuction(data:FieldValues){
+    return fetchWrapper.post("auctions",data)
+}
+
+export async function getAuctionById(id:string):Promise<IAuction> {
+    return fetchWrapper.get(`auctions/${id}`)
+}
+
+export async function updateAuction(id:string,data:FieldValues) {
+    return fetchWrapper.put(`auctions/${id}`,data)
+}
+export async function deleteAuction(id:string) {
+    return fetchWrapper.del(`auctions/${id}`)
+}
+
 
 export async function updateAuctointest():Promise<{status:number,message:string}>{
     const data = {
