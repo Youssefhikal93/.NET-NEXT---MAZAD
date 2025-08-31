@@ -5,24 +5,41 @@ import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { AiFillCar, AiFillTrophy, AiOutlineLogout } from "react-icons/ai";
 import {HiCog, HiUser} from "react-icons/hi"
+import { useParamsStore } from "../hooks/useParamsStore";
+import { usePathname, useRouter } from "next/navigation";
 
 type Props = {
   user : User;
 }
 
 export default function UserActions({user}:Props) {
+  const setParams = useParamsStore(state=>state.setParams);
+  const router = useRouter();
+  const pathname = usePathname();
+
+  function setWinner() {
+    setParams({winner: user.username, seller:undefined})
+    if(pathname !== "/") router.push("/")
+  }
+  function setSeller() {
+    setParams({seller: user.username, winner:undefined})
+        if(pathname !== "/") router.push("/")
+
+  }
+
   return (
-    // <div>
       <Dropdown inline label={`Welcome ${user.username}`}
       className="cursor-pointer">
-        <DropdownItem icon={HiUser}>
+        <DropdownItem icon={HiUser} onClick={setSeller}>
           My Auctions
         </DropdownItem>
-          <DropdownItem icon={AiFillTrophy}>
+          <DropdownItem icon={AiFillTrophy} onClick={setWinner}>
           Auctions won
         </DropdownItem>
           <DropdownItem icon={AiFillCar}>
+        <Link href="/auction/create">
           Sell my car
+        </Link>
         </DropdownItem>
          <DropdownItem icon={HiCog}>
           <Link href="/session">
