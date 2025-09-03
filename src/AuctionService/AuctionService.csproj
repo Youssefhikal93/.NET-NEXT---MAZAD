@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.71.0" />
     <PackageReference Include="MassTransit.EntityFrameworkCore" Version="8.5.3-develop.2359" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.3-develop.2359" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.19" />
@@ -19,5 +20,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Contracts\Contracts.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+  <Protobuf Include="Protos\auctions.proto" GrpcServices="Server" />
+</ItemGroup>
 
 </Project>
