@@ -5,6 +5,7 @@ WORKDIR /app
 # for every dockerfile in the project to take advantage of docker caching
 COPY Mazad.sln ./
 COPY src/GatewayService/GatewayService.csproj ./src/GatewayService/
+COPY src/BiddingService/BiddingService.csproj ./src/BiddingService/
 
 
 # Restore package deps
