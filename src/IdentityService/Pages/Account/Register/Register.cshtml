@@ -1,6 +1,7 @@
 ﻿@page
 @model IdentityService.Pages.Account.RegisterModel
 
+ @*  
 <div>
     <partial name="_ValidationSummary" />
 
@@ -72,6 +73,129 @@
                         <strong>Successfully registered!</strong> You can now log in.
                     </div>
                 }
+            </div>
+        </div>
+    </div>
+</div>
+*@
+
+<div class="register-page">
+    <partial name="_ValidationSummary" />
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-header bg-transparent border-0 pt-5">
+                        <div class="d-flex justify-content-center align-items-center mb-4">
+                            <svg width="80px" height="80px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 13.5V5.5C6 4.39543 6.89543 3.5 8 3.5H9.5C10.6046 3.5 11.5 4.39543 11.5 5.5V13.5M6 13.5H18M6 13.5V18.5C6 19.6046 6.89543 20.5 8 20.5H16C17.1046 20.5 18 19.6046 18 18.5V13.5M18 13.5V9.5C18 8.39543 17.1046 7.5 16 7.5H14.5C13.3954 7.5 12.5 8.39543 12.5 9.5V13.5M11.5 13.5H12.5M11.5 13.5V16.5M12.5 13.5V16.5" stroke="#8B0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <h1 class="h2 fw-bold text-dark ms-3">Mazad Auctions</h1>
+                        </div>
+                        <h2 class="text-center mb-0 fw-normal">Create Your Account</h2>
+                    </div>
+                    
+                    <div class="card-body px-5 py-4">
+                        <form method="post">
+                            <input type="hidden" asp-for="Input.ReturnUrl" />
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <label asp-for="Input.FirstName" class="form-label fw-semibold"></label>
+                                    <div class="input-group">
+                                        @* <span class="input-group-text bg-light border-end-0">
+                                            <i class="fas fa-user text-muted"></i>
+                                        </span> *@
+                                        <input class="form-control py-2 border-start-0" 
+                                               placeholder="First Name" 
+                                               asp-for="Input.FirstName" />
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-4">
+                                    <label asp-for="Input.LastName" class="form-label fw-semibold"></label>
+                                    <div class="input-group">
+                                        @* <span class="input-group-text bg-light border-end-0">
+                                            <i class="fas fa-user text-muted"></i>
+                                        </span> *@
+                                        <input class="form-control py-2 border-start-0" 
+                                               placeholder="Last Name" 
+                                               asp-for="Input.LastName" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label asp-for="Input.UserName" class="form-label fw-semibold"></label>
+                                <div class="input-group">
+                                    @* <span class="input-group-text bg-light border-end-0">
+                                        <i class="fas fa-at text-muted"></i>
+                                    </span> *@
+                                    <input class="form-control py-2 border-start-0" 
+                                           placeholder="Username" 
+                                           asp-for="Input.UserName" 
+                                           autofocus />
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label asp-for="Input.Email" class="form-label fw-semibold"></label>
+                                <div class="input-group">
+                                    @* <span class="input-group-text bg-light border-end-0">
+                                        <i class="fas fa-envelope text-muted"></i>
+                                    </span> *@
+                                    <input class="form-control py-2 border-start-0" 
+                                           placeholder="Email" 
+                                           asp-for="Input.Email" />
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label asp-for="Input.Password" class="form-label fw-semibold"></label>
+                                <div class="input-group">
+                                    @* <span class="input-group-text bg-light border-end-0">
+                                        <i class="fas fa-lock text-muted"></i>
+                                    </span> *@
+                                    <input type="password" 
+                                           class="form-control py-2 border-start-0" 
+                                           placeholder="Password" 
+                                           asp-for="Input.Password" 
+                                           autocomplete="off"
+                                            />
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2 mb-4">
+                                <button  class="btn btn-dark btn-lg btn-block" name="Input.Button" value="register">
+                                    <i class="fas fa-user-plus me-2"></i>Register
+                                </button>
+                                <button  class="btn btn-outline-dark btn-lg btn-block" name="Input.Button" value="cancel">
+                                    Cancel
+                                </button>
+                            </div>
+                            
+                            
+                            <div class="text-center pt-3">
+                                <p class="mb-0">
+                                    Already registered? 
+                                    <a asp-page="../Login/Index" 
+                                       asp-route-returnUrl="@Model.Input.ReturnUrl" 
+                                       class="text-decoration-none fw-semibold">
+                                        Log in here
+                                    </a>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+
+                    @if (Model.RegisterSuccess)
+                    {
+                        <div class="alert alert-success m-4 mt-2 text-center rounded-3">
+                            <strong>Successfully registered!</strong> You can now log in.
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     </div>
