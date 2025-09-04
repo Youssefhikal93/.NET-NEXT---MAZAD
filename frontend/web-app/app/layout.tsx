@@ -31,7 +31,7 @@ export default function RootLayout({
     <html lang="en" className={geistSans.variable}>
       <body className={`${geistSans.className}`} >
         <Navbar/>
-        <main className="container mx-auto px-5 pt-10">
+        <main className="container mx-auto px-5 pt-10 mb-10">
         {children}
         </main>
         <ToastarProvider/>

@@ -1,22 +1,29 @@
 "use client";
-import { IAuction, pagedResult } from "@/app/types/types";
+import { IAuction } from "@/app/types/types";
 import AuctionCard from "./AuctionCard";
 import AppPagination from "../Components/AppPagination";
 import { getAuctions } from "@/app/_lib/actions/auctions";
-import { useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import Filter from "./Filter";
 import { useParamsStore } from "../hooks/useParamsStore";
 import { useShallow } from "zustand/shallow";
 import queryString from "query-string";
 import EmptyFilter from "../Components/EmptyFilter";
 import { Spinner } from "flowbite-react";
+import { useAuctionsStore } from "../hooks/useAuctions";
 
 
 
 
 export default  function Listings() {
-    const [data,setData]=useState<pagedResult<IAuction>>();
-
+  const [loading,setLoading]=useState(true);
+    const data=useAuctionsStore(useShallow(state=>({
+      auctions:state.auctions,
+      totalCount: state.totalCount,
+      pageCount:state.pageCount
+  
+  })));
+  
   const params = useParamsStore(useShallow( state=>({
     pageNumber:state.pageNumber,
     pageSize:state.pageSize,
@@ -26,7 +33,9 @@ export default  function Listings() {
     seller: state.seller,
     winner: state.winner
   })));
+
   const setParams = useParamsStore(state=>state.setParams)
+  const setData = useAuctionsStore(state=>state.setData)
   const url = queryString.stringifyUrl({url:"",query:params},{skipEmptyString:true})
 
   function setPageNumber(pageNumber:number){
@@ -38,11 +47,11 @@ export default  function Listings() {
     getAuctions(url).then(data=>{
       setData(data)
     });
-
+    setLoading(false)
    
-},[url])
+},[setData, url])
 
-  if(!data) return (
+  if(loading) return (
     <div className="flex justify-center items-center min-h-screen">
         <div className="flex flex-col justify-center items-center">
             <Spinner color="failure" size="xl"/> 
@@ -58,7 +67,7 @@ export default  function Listings() {
     
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       { data &&
-        data.results.map((auction:IAuction)=> 
+        data.auctions.map((auction:IAuction)=> 
           ( <AuctionCard auction={auction} key={auction.id}/>)
       )
     }
