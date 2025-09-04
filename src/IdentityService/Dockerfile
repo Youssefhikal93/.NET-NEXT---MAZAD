@@ -4,6 +4,7 @@ WORKDIR /app
 # Copy each project to get advange from the caching
 COPY Mazad.sln ./
 COPY src/IdentityService/IdentityService.csproj ./src/IdentityService/
+COPY src/BiddingService/BiddingService.csproj ./src/BiddingService/
 
 # Restore as distinct layers
 RUN dotnet restore ./src/IdentityService/IdentityService.csproj

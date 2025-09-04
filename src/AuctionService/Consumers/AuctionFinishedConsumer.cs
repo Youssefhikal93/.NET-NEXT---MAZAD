@@ -1,33 +1,30 @@
-using System;
 using AuctionService.Data;
-using AuctionService.Models;
 using Contracts;
 using MassTransit;
 
-namespace AuctionService.Consumers;
+namespace AuctionService;
 
-public class AuctionFinishedConsumer : IConsumer<AuctionFinished>
+public class BidPlacedConsumer : IConsumer<BidPlaced>
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public AuctionFinishedConsumer(ApplicationDbContext dbContext)
+    public BidPlacedConsumer(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }
-    public async Task Consume(ConsumeContext<AuctionFinished> context)
+
+    public async Task Consume(ConsumeContext<BidPlaced> context)
     {
-                System.Console.WriteLine("===> consuming auction finished");
+        Console.WriteLine("--> Consuming bid placed");
 
-        var auction = await _dbContext.Auctions.FindAsync(context.Message.AuctionId);
+        var auction = await _dbContext.Auctions.FindAsync(Guid.Parse(context.Message.AuctionId));
 
-        if (context.Message.ItemSold)
+        if (auction.CurrentHighBid == null 
+            || context.Message.BidStatus.Contains("Accepted") 
+            && context.Message.Amount > auction.CurrentHighBid)
         {
-            auction.Winner = context.Message.Winner;
-            auction.Seller = context.Message.Seller;
+            auction.CurrentHighBid = context.Message.Amount;
+            await _dbContext.SaveChangesAsync();
         }
-
-        auction.Status = auction.SoldAmount > auction.ReservePrice ? Status.Finished : Status.ReserveNotMet;
-
-        await _dbContext.SaveChangesAsync();
     }
 }
