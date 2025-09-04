@@ -11,15 +11,26 @@ builder.Services.AddReverseProxy()
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(jwtOptions =>
 {
-	jwtOptions.Authority = builder.Configuration["IdentityServiceUrl"];
+    jwtOptions.Authority = builder.Configuration["IdentityServiceUrl"];
     jwtOptions.RequireHttpsMetadata = false;
     jwtOptions.TokenValidationParameters.ValidateAudience = false;
     jwtOptions.TokenValidationParameters.NameClaimType = "username";
 });
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("customPolicy", b =>
+    {
+        b.AllowAnyHeader().AllowAnyMethod()
+        .AllowCredentials().WithOrigins(builder.Configuration["ClientApp"]);
+    });
+});
+
 var app = builder.Build();
 
+app.UseCors();
 
+app.MapReverseProxy();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapReverseProxy();
 app.Run();
