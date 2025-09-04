@@ -9,6 +9,7 @@ import { useParamsStore } from "../hooks/useParamsStore";
 import { useShallow } from "zustand/shallow";
 import queryString from "query-string";
 import EmptyFilter from "../Components/EmptyFilter";
+import { Spinner } from "flowbite-react";
 
 
 
@@ -41,7 +42,14 @@ export default  function Listings() {
    
 },[url])
 
-  if(!data) return <h3>Loading...</h3>
+  if(!data) return (
+    <div className="flex justify-center items-center min-h-screen">
+        <div className="flex flex-col justify-center items-center">
+            <Spinner color="failure" size="xl"/> 
+            <p className="mt-2 text-red-900 text-xs">Loading Auctions...</p>
+        </div>
+    </div>
+  ) 
 
   return (
     <>
