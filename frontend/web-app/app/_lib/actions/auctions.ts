@@ -29,6 +29,9 @@ export async function getBidsForAuction(id:string):Promise<Bid[]>{
     return fetchWrapper.get(`bids/${id}`)
 }
 
+export async function placeBidForAuction(auctionId:string,amount:number):Promise<Bid>{
+    return fetchWrapper.post(`bids?auctionId=${auctionId}&amount=${amount}`,{})
+}
 
 export async function updateAuctointest():Promise<{status:number,message:string}>{
     const data = {

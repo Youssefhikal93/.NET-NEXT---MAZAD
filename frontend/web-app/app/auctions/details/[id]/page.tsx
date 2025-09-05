@@ -5,13 +5,13 @@ import DetailedSpecs from "./DetailedSpecs"
 import EditButton from "./EditButton"
 import { getCurrentUser } from "@/app/_lib/actions/authActions"
 import DeleteButton from "./DeleteButton"
-import BidItem from "./BidItem"
+import BidList from "./BidList"
 
 export default async function Details({params}:{params:Promise<{id:string}>}) {
     const {id} = await params
     const data = await getAuctionById(id)
     const user = await getCurrentUser();
-    const bids = await getBidsForAuction(id);
+    
   return (
     <>
     <div className="flex justify-between items-center font-sans font-extrabold">
@@ -36,11 +36,12 @@ export default async function Details({params}:{params:Promise<{id:string}>}) {
         <div className="text-center font-sans mb-2 text-lg font-extrabold">
         Bids placed
         </div>
-      <div className="border-0 rounded-2xl p-2 bg-gray-200 overflow-y-auto md:max-h-[60vh]">
+      {/* <div className="border-0 rounded-2xl p-2 bg-gray-200 overflow-y-auto md:max-h-[60vh]">
         {bids.map(bid=>( 
           <BidItem key={bid.id} bid={bid}></BidItem>
         ))}
-        </div>
+        </div> */}
+        <BidList user={user} auction={data} />
       </div>
 
     </div>
