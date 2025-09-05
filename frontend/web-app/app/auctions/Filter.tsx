@@ -30,7 +30,7 @@ export default function Filter() {
         <div className="grid grid-rows-2 gap-4">
 
         <div>
-       <span className='uppercase text-sm text-gray-500 mr-2'>Filter by</span>
+       <span className='uppercase text-sm text-gray-500 mr-2 hidden md:flex'>Filter by</span>
                 <ButtonGroup outline>
                     {orderButtons.map(({label, icon:Icon,value}) => (
                         <Button key={value}
@@ -47,7 +47,7 @@ export default function Filter() {
         </div>
         {/* FIlters */}
          <div>
-       <span className='uppercase text-sm text-gray-500 mr-2'>Order By</span>
+       <span className='uppercase text-sm text-gray-500 mr-2 hidden md:flex'>Order By</span>
                 <ButtonGroup outline>
                     {filterButtons.map(({label, icon:Icon,value}) => (
                         <Button key={value}
@@ -63,7 +63,7 @@ export default function Filter() {
         </div>
          </div>
                 <div className="mt-5">
-                <span className='uppercase text-sm text-gray-500 mr-2'>Page size</span>
+                <span className='uppercase text-sm text-gray-500 mr-2 hidden md:flex'>Page size</span>
                 <ButtonGroup outline>
                     {pageSizeButtons.map((el, i) => (
                         <Button key={i}
