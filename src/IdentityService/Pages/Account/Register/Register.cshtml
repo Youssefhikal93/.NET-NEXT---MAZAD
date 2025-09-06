@@ -1,6 +1,8 @@
 ﻿@page
 @model IdentityService.Pages.Account.RegisterModel
-
+@{
+    var redirectUrl ="http://localhost:3000";
+}
  @*  
 <div>
     <partial name="_ValidationSummary" />
@@ -82,7 +84,7 @@
 <div class="register-page">
     <partial name="_ValidationSummary" />
 
-    <div class="container py-5">
+    <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6">
                 <div class="card shadow-lg border-0 rounded-4">
@@ -170,9 +172,9 @@
                                 <button  class="btn btn-dark btn-lg btn-block" name="Input.Button" value="register">
                                     <i class="fas fa-user-plus me-2"></i>Register
                                 </button>
-                                <button  class="btn btn-outline-dark btn-lg btn-block" name="Input.Button" value="cancel">
+                                <a href="@redirectUrl"  class="btn btn-outline-dark btn-lg btn-block" name="Input.Button" value="cancel">
                                     Cancel
-                                </button>
+                                </a>
                             </div>
                             
                             

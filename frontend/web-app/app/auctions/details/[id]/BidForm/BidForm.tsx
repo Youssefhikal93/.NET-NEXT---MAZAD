@@ -17,6 +17,11 @@ export default function BidForm({auctionId,highBid,onSuccess}:Props) {
   const addBid = useBidStore(state=>state.addBid);
 
   function onSubmit(data:FieldValues){
+    if(data.amount <= highBid){
+      reset();
+      return toast.error("Bid must be atleast "+numberWithCommas(highBid +1) + "SEK")
+    } 
+      
     placeBidForAuction(auctionId,+data.amount)
         .then(bid=>{
             if(bid.error) {
@@ -32,7 +37,10 @@ export default function BidForm({auctionId,highBid,onSuccess}:Props) {
 
     return (
     <form  id="bidForm" onSubmit={handleSubmit(onSubmit)} className="flex items-center border-2 rounded-lg py-2">
-        <input type="number" {...register('amount')} className="input-custom" min={highBid+1} placeholder={`Enter you bid (Min bid is ${numberWithCommas(highBid+1)}) SEK`}
+        <input type="number" {...register('amount')} 
+        min={highBid+1}
+         className="input-custom" 
+         placeholder={`Enter you bid (Min bid is ${numberWithCommas(highBid+1)}) SEK`}
         />
     </form>
   )
