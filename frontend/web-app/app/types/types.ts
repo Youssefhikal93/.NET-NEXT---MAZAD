@@ -48,3 +48,12 @@ export type Bid = {
      amount:number
      bidStatus:string
 }
+
+export type AuctionFinsihed = {
+     itemSold:boolean
+     auctionId: string
+     winner?:string
+     seller:string
+     amount?:number
+     
+}

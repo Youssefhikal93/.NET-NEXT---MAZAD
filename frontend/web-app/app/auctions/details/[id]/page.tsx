@@ -15,14 +15,14 @@ export default async function Details({params}:{params:Promise<{id:string}>}) {
   return (
     <>
     <div className="flex justify-between items-center font-sans font-extrabold">
-       <div className="text-center font-sans text-2xl font-extrabold">
+       <div className="text-center font-sans text-sm md:text-2xl font-extrabold">
        {data.make} {data.model}
         </div>
         
       
         <div className="flex flex-row gap-3 mb-3">
-          <span className="text-xl font font-semibold">Time remaning: </span>
-          <h3 className="text-lg font-semibold">
+          <span className="hidden md:text-lg  font-semibold">Time remaning: </span>
+          <h3 className="text-sm md:text-lg font-semibold">
             <CountDownTimer auctionEnd={data.auctionEnd} />
           </h3>
         </div>
