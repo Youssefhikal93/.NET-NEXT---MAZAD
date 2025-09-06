@@ -17,6 +17,6 @@ public class AuctionCreatedConsumer : IConsumer<AuctionCreated>
     public async Task Consume(ConsumeContext<AuctionCreated> context)
     {
         System.Console.WriteLine("------Auction created msg recieved -----");
-        await _hubContext.Clients.All.SendAsync("Auction created", context.Message);
+        await _hubContext.Clients.All.SendAsync("AuctionCreated", context.Message);
     }
 }

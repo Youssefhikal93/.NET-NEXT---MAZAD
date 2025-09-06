@@ -1,11 +1,12 @@
 using System;
+using Contracts;
 using MassTransit;
 using Microsoft.AspNetCore.SignalR;
 using NotificationService.Hubs;
 
 namespace NotificationService.Consumers;
 
-public class BidPlacedConsumer : IConsumer<BidPlacedConsumer>
+public class BidPlacedConsumer : IConsumer<BidPlaced>
 {
     private readonly IHubContext<NotificationHub> _hubContext;
 
@@ -13,9 +14,11 @@ public class BidPlacedConsumer : IConsumer<BidPlacedConsumer>
     {
         _hubContext = hubContext;
     }
-    public async Task Consume(ConsumeContext<BidPlacedConsumer> context)
+    public async Task Consume(ConsumeContext<BidPlaced> context)
     {
          System.Console.WriteLine("bidPlaced notifiction");
-        await _hubContext.Clients.All.SendAsync("bidPlaced", context.Message);
+        await _hubContext.Clients.All.SendAsync("BidPlaced", context.Message);
     }
+
+  
 }
