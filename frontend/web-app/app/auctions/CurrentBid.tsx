@@ -7,9 +7,7 @@ type Props={
 
 }
 export default function CurrentBid({amount,reservePrice}:Props) {
-    const text = amount ? `${numberWithCommas(
-      
-      amount)} sek` : "No bids";
+    const text = amount ? `${numberWithCommas(amount)} sek` : "No bids";
     const color = amount ? amount > reservePrice ? "bg-green-600" : "bg-amber-600" : "bg-red-800"
     return(
 

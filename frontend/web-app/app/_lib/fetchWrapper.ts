@@ -45,16 +45,23 @@ async function del(url:string) {
 
 async function handelResponse(res: Response) {
     const text = await res.text();
-    const data = text && JSON.parse(text);
+    let data;
+    try{
+     data = text ? JSON.parse(text) : null;
+
+    }
+    catch{
+         data = text;
+    }
 
     if(res.ok){
         return data || res.statusText
     }else {
         const error = {
             status: res.status,
-            message:res.statusText
+            message:typeof data == 'string' ? data :  res.statusText
         }
-        return error;
+        return {error};
     }
 }
 

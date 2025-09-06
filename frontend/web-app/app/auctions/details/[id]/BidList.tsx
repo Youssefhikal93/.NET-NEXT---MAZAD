@@ -48,7 +48,10 @@ export default function BidList({user,auction}:Props) {
     <>
     <div className="flex justify-between items-center top-0 bg-gray-50 shadow-2xl p-2 text-center">
           <h1 className="font-extrabold text-gray-800 uppercase ">{`Current high bid (${numberWithCommas(highBid)}) sek`}</h1>
-          <Button size="xs" color={"dark"} onClick={() => setOpenModal(true)}>Place a bid</Button>
+          
+          <Button size="xs" color={"dark"} onClick={() => setOpenModal(true)}
+            disabled={!user ||  user && user.username == auction.seller}
+            >{!user ? "login to place a a bid"  : user && user.username === auction.seller ? "Its your auction dude 😁" :"Place a bid"}</Button>
         </div>
     <div className="border-0 shadow-md rounded-2xl p-2 bg-gray-100 overflow-y-auto md:max-h-[60vh]">
 
@@ -61,27 +64,6 @@ export default function BidList({user,auction}:Props) {
             ))
           }
             </div>
-             {/* <Modal show={openModal} onClose={() => setOpenModal(false)}>
-                    <ModalHeader>
-                        <Logo/> 
-                    </ModalHeader>
-                    <ModalBody>
-                      <div className="space-y-6">
-                        <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                          Place a Bid...
-                        </p>
-                        <BidForm auctionId={auction.id} highBid={highBid} onSuccess={() => setOpenModal(false)}/>
-                      </div>
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button color={"red"} type="submit" form="bidForm" onClick={() => {
-                        
-                      }}>Submit your bid</Button>
-                      <Button color="alternative" onClick={() => setOpenModal(false)}>
-                        Cancel
-                      </Button>
-                    </ModalFooter>
-                  </Modal> */}
                   <BidModal openModal={openModal} setOpenModal={setOpenModal}>
                      <BidForm auctionId={auction.id} highBid={highBid} onSuccess={() => setOpenModal(false)}/>
                   </BidModal>
