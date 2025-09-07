@@ -1,5 +1,5 @@
 "use server";
-import { IAuction, pagedResult } from "@/app/types/types";
+import { Bid, IAuction, pagedResult } from "@/app/types/types";
 
 import { fetchWrapper } from "../fetchWrapper";
 import { FieldValues } from "react-hook-form";
@@ -25,6 +25,13 @@ export async function deleteAuction(id:string) {
     return fetchWrapper.del(`auctions/${id}`)
 }
 
+export async function getBidsForAuction(id:string):Promise<Bid[]>{
+    return fetchWrapper.get(`bids/${id}`)
+}
+
+export async function placeBidForAuction(auctionId:string,amount:number):Promise<Bid>{
+    return fetchWrapper.post(`bids?auctionId=${auctionId}&amount=${amount}`,{})
+}
 
 export async function updateAuctointest():Promise<{status:number,message:string}>{
     const data = {

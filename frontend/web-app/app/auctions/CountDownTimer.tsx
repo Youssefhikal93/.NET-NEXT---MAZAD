@@ -1,5 +1,7 @@
 "use client"
 import Countdown, { zeroPad } from "react-countdown";
+import { useBidStore } from "../hooks/useBisStore";
+import { usePathname } from "next/navigation";
 
 
 const renderer = ({ days,hours, minutes, seconds, completed }:{days:number, hours:number, minutes:number, seconds:number, completed:boolean }) => {
@@ -12,10 +14,11 @@ const renderer = ({ days,hours, minutes, seconds, completed }:{days:number, hour
             {completed ?( 
         <span>Auction finished</span>) :   (
             
-            //in case warinign appeared says that it doffers server from the client
-            <span suppressHydrationWarning={true}>
+            //in case warinign appeared says that it doffers server from the client 
             
-                {days}:{zeroPad(hours)}:{minutes}:{seconds}</span>
+              days > 1 ?  <span suppressHydrationWarning={true}>{days} Days left</span>:
+            
+            <span suppressHydrationWarning={true}>{zeroPad(hours)}:{zeroPad(minutes)}:{zeroPad(seconds)} left</span>
         )
         }
 
@@ -29,10 +32,19 @@ const renderer = ({ days,hours, minutes, seconds, completed }:{days:number, hour
   }
 
 export default function CountDownTimer({auctionEnd}:Props) {
+  const setOpen = useBidStore(state=>state.setOpen);
+  const pathname = usePathname();
+
+  function auctionFinished(){
+    if(pathname.startsWith("/auction/details")) {
+        setOpen(false)
+    }
+  }
+
   return (
     <div>
       
-      <Countdown date={auctionEnd} renderer={renderer}/>
+      <Countdown date={auctionEnd} renderer={renderer} onComplete={auctionFinished}/>
     </div>
   )
 }

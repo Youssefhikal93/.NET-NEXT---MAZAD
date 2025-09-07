@@ -19,7 +19,7 @@ export default function Search() {
     }
 
   return (
-        <div className='flex w-fit items-center border-0 rounded-full py-2 shadow-sm'>
+        <div className='flex w-fit items-center border-0 rounded-full py-2 shadow-sm border-b-2'>
             <input
             onKeyDown={(e)=> {
                 if(e.key === "Enter"){
@@ -45,7 +45,7 @@ export default function Search() {
             <button onClick={handelSearch} >
                 <FaSearch
                     size={34}
-                    className='bg-red-800 text-white rounded-full p-2 cursor-pointer mx-2' />
+                    className='bg-gray-800 text-white rounded-full p-2 cursor-pointer mx-2' />
             </button>
         </div>
     )

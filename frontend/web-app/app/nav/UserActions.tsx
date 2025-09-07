@@ -16,6 +16,7 @@ export default function UserActions({user}:Props) {
   const setParams = useParamsStore(state=>state.setParams);
   const router = useRouter();
   const pathname = usePathname();
+  const NormalizeName = user.username[0].toUpperCase() +user.username.slice(1) ;
 
   function setWinner() {
     setParams({winner: user.username, seller:undefined})
@@ -28,7 +29,7 @@ export default function UserActions({user}:Props) {
   }
 
   return (
-      <Dropdown inline label={`Welcome ${user.username}`}
+      <Dropdown inline label={<span className="text-gray-700 font-semibold text-md"> {`Welcome ${NormalizeName}`}</span>}
       className="cursor-pointer">
         <DropdownItem icon={HiUser} onClick={setSeller}>
           My Auctions
