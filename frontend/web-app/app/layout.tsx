@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
 import Navbar from "./nav/Navbar";
 import ToastarProvider from "./providers/ToastarProvider";
 import SignalRProvider from "./providers/SignalRProvider";
-import { getCurrentUser } from "./_lib/actions/authActions";
+import { SessionProvider } from "next-auth/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// const geistMono = Geist_Mono({
+//   variable: "--font-geist-mono",
+//   subsets: ["latin"],
+// });
 
 export const metadata: Metadata = {
   title: {
@@ -29,18 +29,20 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await getCurrentUser();
   return (
     <html lang="en" className={geistSans.variable}>
       <body className={`${geistSans.className}`} >
+        <SessionProvider>
+
         <Navbar/>
         <main className="container mx-auto px-5 pt-10 mb-10">
-          <SignalRProvider user={user}>
+          <SignalRProvider>
 
         {children}
           </SignalRProvider>
         </main>
         <ToastarProvider/>
+        </SessionProvider>
       </body>
     </html>
   );

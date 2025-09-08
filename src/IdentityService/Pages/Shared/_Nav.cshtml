@@ -7,8 +7,10 @@
         name = Context.User?.GetDisplayName();
     }
 }
+@inject IConfiguration Configuration
+
 @{
-    var redirectUrl ="http://localhost:3000";
+    var redirectUrl = Configuration["Frontend:RedirectUrl"] ?? "http://localhost:3000";
 }
 
 

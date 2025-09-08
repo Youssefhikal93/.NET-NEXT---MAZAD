@@ -5,19 +5,20 @@ import { useAuctionsStore } from '../hooks/useAuctions';
 import { useBidStore } from '../hooks/useBisStore';
 import { useParams } from 'next/navigation';
 import { AuctionFinsihed, Bid, IAuction } from '../types/types';
-import { User } from 'next-auth';
 import toast from 'react-hot-toast';
 import AuctionCreatedToast from '../Components/AuctionCreatedToast';
 import { getAuctionById } from '../_lib/actions/auctions';
-import { Spinner } from 'flowbite-react';
 import AuctionFinishedToast from '../Components/AuctionFinishedToast';
+import { useSession } from 'next-auth/react';
 
 type Props={
 children: ReactNode
-user: User | null
+
 };
 
-export default function SignalRProvider({children,user}:Props) {
+export default function SignalRProvider({children}:Props) {
+  const session = useSession();
+  const user = session.data?.user;
   const connection = useRef<HubConnection|null>(null)
   const setCurrentPrice = useAuctionsStore(state=>state.setCurrentPrice)
   const addBid = useBidStore(state=>state.addBid);
@@ -45,14 +46,14 @@ const handelAuctionFinished =useCallback((finishedAuction:AuctionFinsihed)=>{
         return toast.promise<IAuction>(auction, 
           {loading:"loading" , 
             success:(auction)=><AuctionFinishedToast finishedAuction={finishedAuction} auction={auction}/>,
-          error:(err)=> "Auction error"}, {duration:10000,icon:null})
+          error:()=> "Auction error"}, {duration:10000,icon:null})
           
   },[])
 
   useEffect(()=>{
     if(!connection.current){
         const newConnection = new HubConnectionBuilder()
-        .withUrl("http://localhost:6001/notifications")
+        .withUrl(process.env.NEXT_PUBLIC_NOTFIY_URL!)
         .withAutomaticReconnect()
         .build();
 

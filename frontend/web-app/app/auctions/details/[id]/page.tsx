@@ -1,4 +1,4 @@
-import { getAuctionById, getBidsForAuction } from "@/app/_lib/actions/auctions"
+import { getAuctionById } from "@/app/_lib/actions/auctions"
 import CountDownTimer from "../../CountDownTimer"
 import CardImage from "../../CardImage"
 import DetailedSpecs from "./DetailedSpecs"
@@ -10,7 +10,7 @@ import BidList from "./BidList"
 export default async function Details({params}:{params:Promise<{id:string}>}) {
     const {id} = await params
     const data = await getAuctionById(id)
-    const user = await getCurrentUser();
+    const user = await getCurrentUser() || null;
     
   return (
     <>

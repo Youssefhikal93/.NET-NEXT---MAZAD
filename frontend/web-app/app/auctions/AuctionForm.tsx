@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 import { Button, Spinner} from "flowbite-react";
 import { usePathname, useRouter } from "next/navigation";

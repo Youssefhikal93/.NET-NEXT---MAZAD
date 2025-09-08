@@ -96,9 +96,10 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://+80
+      - IssuerUri=http://id.mazad.se
+      - ClientApp=http://app.mazad.se
       - ConnectionStrings__DefaultConnection=Server=postgres:5432;User Id=postgres;Password=postgrespass;Database=Identity
-    ports:
-      - 5001:80
+      - VIRTUAL_HOST=id.mazad.se
     depends_on: 
       postgres:
         condition: service_healthy
@@ -110,6 +111,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_URLS=http://+80
+      - ClientApp=http://app.mazad.se
+      - VIRTUAL_HOST=api.mazad.se
     ports:
       - 6001:80
   bid-svc:
@@ -145,6 +148,32 @@ services:
     depends_on: 
       rabbitmq:
         condition: service_healthy
+  web-app:
+    image: youssefhikal/web-app:latest
+    build: 
+      context: .
+      dockerfile: frontend/web-app/Dockerfile
+    volumes:
+      - /var/lib/web/data
+    environment:
+      - AUTH_SECRET=z8ANsttew9VcqYRt7SL7sYIvkkT1Ie5u6YI2yKHT9PQ=
+      - API_URL=http://gateway-svc/
+      - ID_URL=http://id.mazad.se
+      - ID_URL_INTERNAL=http://identity-svc
+      - AUTH_URL=http://app.mazad.se
+      - AUTH_URL_INTERNAL=http://web-app:3000
+      - VIRTUAL_HOST=app.mazad.se
+      - VIRTUAL_PORT=3000
+    ports:
+      - 3000:3000
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - 80:80
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./devcerts:/etc/nginx/certs
 volumes:
   pgdata:
   mongodata:

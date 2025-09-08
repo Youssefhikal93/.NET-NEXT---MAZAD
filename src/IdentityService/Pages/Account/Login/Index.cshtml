@@ -1,7 +1,9 @@
 @page
 @model IdentityService.Pages.Login.Index
+@inject IConfiguration Configuration
+
 @{
-    var redirectUrl ="http://localhost:3000";
+    var redirectUrl = Configuration["Frontend:RedirectUrl"] ?? "http://localhost:3000";
 }
 <div class="login-page">
     <partial name="_ValidationSummary" />

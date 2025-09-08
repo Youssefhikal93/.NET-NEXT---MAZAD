@@ -11,7 +11,7 @@ import { numberWithCommas } from "@/app/_lib/numberWithComma"
 import EmptyFilter from "@/app/Components/EmptyFilter"
 import { Button } from "flowbite-react"
 import BidModal from "@/app/Components/BidModal"
-import BidForm from "./BidForm/BidForm"
+import BidForm from "./BidForm"
 
 type Props={
   user:User | null ;

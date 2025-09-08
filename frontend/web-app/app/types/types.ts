@@ -29,7 +29,7 @@ export interface IAuction {
     make:string
     mileage:number
     model:string
-    reservePrice?:number
+    reservePrice:number
     seller:string
     soldAmount?:number
     status:string
@@ -41,6 +41,7 @@ export interface IAuction {
 }
 
 export type Bid = {
+     error?: any
      id:string
      auctionId: string
      bidder:string
