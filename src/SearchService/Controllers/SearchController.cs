@@ -45,8 +45,15 @@ namespace SearchService.Controllers
             {
                 "finished" => query.Match(x => x.AuctionEnd < DateTime.UtcNow),
                 "endingSoon" => query.Match(x => x.AuctionEnd < DateTime.UtcNow.AddHours(6) && x.AuctionEnd > DateTime.UtcNow),
-                _ => query.Match(x=>x.AuctionEnd>DateTime.UtcNow)
+                "live" => query.Match(x => x.AuctionEnd > DateTime.UtcNow),
+                _ => query.Match(x => x.AuctionEnd > DateTime.UtcNow)
             };
+
+            // Special case: when filtering by winner, show finished auctions (won auctions)
+            if (!string.IsNullOrEmpty(searchParams.Winner))
+            {
+                query = query.Match(x => x.AuctionEnd < DateTime.UtcNow);
+            }
 
 
             //pagination

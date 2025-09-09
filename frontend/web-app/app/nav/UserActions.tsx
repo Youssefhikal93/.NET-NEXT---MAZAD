@@ -19,7 +19,7 @@ export default function UserActions({user}:Props) {
   const NormalizeName = user.username[0].toUpperCase() +user.username.slice(1) ;
 
   function setWinner() {
-    setParams({winner: user.username, seller:undefined})
+    setParams({winner: user.username, seller:undefined, filterBy: "finished"})
     if(pathname !== "/") router.push("/")
   }
   function setSeller() {
