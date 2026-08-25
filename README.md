@@ -20,9 +20,11 @@ A car auction platform built as **event-driven .NET microservices** with a **Nex
 
 > Hosted on an Oracle Cloud Always Free ARM VM — see [DEPLOYMENT.md](DEPLOYMENT.md) for the full setup.
 
-## ▶️ Run It Yourself (one command)
+## ▶️ Run It Yourself
 
-All you need is [Docker](https://www.docker.com/products/docker-desktop/):
+Prerequisites: [Docker Desktop](https://www.docker.com/products/docker-desktop/) and [Node.js 20+](https://nodejs.org).
+
+**1. Start the backend** (6 services + PostgreSQL + MongoDB + RabbitMQ):
 
 ```bash
 git clone https://github.com/Youssefhikal93/.NET-NEXT---MAZAD.git mazad
@@ -30,17 +32,39 @@ cd mazad
 docker compose up -d --build
 ```
 
-Then start the frontend:
+The first build takes a few minutes. Verify with `docker compose ps` (9 containers) or
+`curl http://localhost:6001/search` — it should return seeded auctions as JSON.
+
+**2. Configure the frontend** — NextAuth needs one secret to encrypt session cookies.
+Create `frontend/web-app/.env.local` containing a single line (any long random string works):
 
 ```bash
 cd frontend/web-app
+npx auth secret   # generates .env.local with a random AUTH_SECRET for you
+```
+
+**3. Start the frontend:**
+
+```bash
 npm install
 npm run dev
 ```
 
-Open **http://localhost:3000**, log in as `bob` / `Pass123$`, and place a bid. Open a second browser as `alice` and watch the bid arrive live.
+**4. Try it:** open **http://localhost:3000**
 
-> First boot only: if the auction list looks empty, run `docker compose restart search-svc` — the search index syncs from the auction service, which may still be seeding on the very first start.
+- Log in as `bob` / `Pass123$` (the login page is served by the Identity Server on `localhost:5001`)
+- Open an auction and place a bid
+- Open a second browser (or incognito window), log in as `alice` / `Pass123$`, and watch bids
+  and new auctions appear **live** — that's SignalR pushing events end-to-end through
+  RabbitMQ → Notification Service → Gateway → browser.
+
+**Troubleshooting**
+
+| Symptom | Fix |
+|---|---|
+| Auction list is empty on very first boot | `docker compose restart search-svc` — the search index syncs from the auction service, which may still have been seeding |
+| `MissingSecret` error in the frontend console | Step 2 was skipped — create `.env.local` and restart `npm run dev` |
+| `EADDRINUSE :::3000` | Another dev server is already running on port 3000 — stop it first |
 
 ## 🏗 Architecture
 

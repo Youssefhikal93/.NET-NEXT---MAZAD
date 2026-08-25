@@ -2,6 +2,10 @@
 @plugin "flowbite-react/plugin/tailwindcss";
 @source "../.flowbite-react/class-list.json";
 
+/* Force light theme: make dark: utilities require a .dark class (never added)
+   instead of following the OS prefers-color-scheme setting. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 
 [role=button],button {
     cursor: pointer;
