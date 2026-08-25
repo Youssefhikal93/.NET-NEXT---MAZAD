@@ -1,5 +1,5 @@
 "use client"
-import { Bid, IAuction } from "@/app/types/types"
+import { IAuction } from "@/app/types/types"
 import BidItem from "./BidItem"
 import { User } from "next-auth"
 import {  useEffect, useState } from "react"
@@ -33,11 +33,11 @@ export default function BidList({user,auction}:Props) {
 
   useEffect(()=>{
     getBidsForAuction(auction.id)
-      .then((res:any)=>{
-        if(res.error){
+      .then(res=>{
+        if("error" in res){
           throw res.error
         }
-        setBids(res as Bid[])
+        setBids(res)
       }).catch(error=> {
         toast.error(error.message);
       })

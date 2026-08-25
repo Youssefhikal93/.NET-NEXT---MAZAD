@@ -3,6 +3,7 @@ using Duende.IdentityServer;
 using IdentityService.Data;
 using IdentityService.Models;
 using IdentityService.Pages;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -68,7 +69,7 @@ internal static class HostingExtensions
 
                 if (builder.Environment.IsEnvironment("Docker"))
                 {
-                    options.IssuerUri = "http://localhost:5001";
+                    options.IssuerUri = builder.Configuration["IssuerUri"] ?? "http://localhost:5001";
                 }
 
                 // Use a large chunk size for diagnostic data in development where it will be redirected to a local file.
@@ -113,6 +114,16 @@ internal static class HostingExtensions
 
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
+        // Behind a reverse proxy (Caddy/nginx) the app receives plain HTTP;
+        // trust X-Forwarded-* so IdentityServer generates correct https URLs and secure cookies.
+        var forwardedHeadersOptions = new ForwardedHeadersOptions
+        {
+            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+        };
+        forwardedHeadersOptions.KnownNetworks.Clear();
+        forwardedHeadersOptions.KnownProxies.Clear();
+        app.UseForwardedHeaders(forwardedHeadersOptions);
+
         app.UseSerilogRequestLogging();
 
         if (app.Environment.IsDevelopment())

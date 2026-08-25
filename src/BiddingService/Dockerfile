@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1
+﻿# syntax=docker/dockerfile:1
 
 # Comments are provided throughout this file to help you get started.
 # If you need more help, visit the Dockerfile reference guide at
@@ -18,7 +18,7 @@
 
 # WORKDIR /source
 
-# # This is the architecture you’re building for, which is passed in by the builder.
+# # This is the architecture youâ€™re building for, which is passed in by the builder.
 # # Placing it here allows the previous steps to be cached across architectures.
 # ARG TARGETARCH
 
@@ -41,7 +41,7 @@
 # # It will also use whatever happens to be the most recent version of that tag when you
 # # build your Dockerfile. If reproducibility is important, consider using a more specific
 # # version (e.g., aspnet:7.0.10-alpine-3.18),
-# # or SHA (e.g., mcr.microsoft.com/dotnet/aspnet@sha256:f3d99f54d504a21d38e4cc2f13ff47d67235efeeb85c109d3d1ff1808b38d034).
+# # or SHA (e.g., mcr.microsoft.com/dotnet/aspnet).
 # FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS final
 # WORKDIR /app
 
@@ -84,7 +84,7 @@
 # COPY --from=build /app/publish .
 # ENTRYPOINT [ "dotnet", "BiddingService.dll" ]
 
-FROM mcr.microsoft.com/dotnet/sdk:9.0@sha256:3fcf6f1e809c0553f9feb222369f58749af314af6f063f389cbd2f913b4ad556 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /app
 # copy all .csproj files and restore as distinct layers.   Use of the same COPY command
 # for every dockerfile in the project to take advantage of docker caching
@@ -106,7 +106,7 @@ RUN dotnet publish ./src/BiddingService/BiddingService.csproj -c Release -o /app
 
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:9.0@sha256:b4bea3a52a0a77317fa93c5bbdb076623f81e3e2f201078d89914da71318b5d8
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 EXPOSE 80
 COPY --from=build /app/publish .

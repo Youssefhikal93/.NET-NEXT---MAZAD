@@ -1,0 +1,11 @@
+app.{$DOMAIN} {
+	reverse_proxy web-app:3000
+}
+
+api.{$DOMAIN} {
+	reverse_proxy gateway-svc:80
+}
+
+id.{$DOMAIN} {
+	reverse_proxy identity-svc:80
+}

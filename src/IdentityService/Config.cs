@@ -4,6 +4,9 @@ namespace IdentityService;
 
 public static class Config
 {
+    private static string ClientAppUrl =>
+        Environment.GetEnvironmentVariable("ClientApp") ?? "http://localhost:3000";
+
     public static IEnumerable<IdentityResource> IdentityResources =>
         new IdentityResource[]
         {
@@ -35,9 +38,9 @@ public static class Config
             {
                ClientId ="nextApp",
                ClientName ="nextapp",
-               ClientSecrets= {new Secret("ASecret".Sha256())},
+               ClientSecrets= {new Secret((Environment.GetEnvironmentVariable("ClientSecret") ?? "ASecret").Sha256())},
                AllowedScopes = {"openid","profile","auctionApp"},
-               RedirectUris={"http://localhost:3000/api/auth/callback/id-server"},
+               RedirectUris={$"{ClientAppUrl}/api/auth/callback/id-server"},
                AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
                RequirePkce = false,
                AllowOfflineAccess=true,

@@ -52,7 +52,7 @@ const handelAuctionFinished =useCallback((finishedAuction:AuctionFinsihed)=>{
   useEffect(()=>{
     if(!connection.current){
         const newConnection = new HubConnectionBuilder()
-        .withUrl("http://localhost:6001/notifications")
+        .withUrl(process.env.NEXT_PUBLIC_NOTIFY_URL ?? "http://localhost:6001/notifications")
         .withAutomaticReconnect()
         .build();
 

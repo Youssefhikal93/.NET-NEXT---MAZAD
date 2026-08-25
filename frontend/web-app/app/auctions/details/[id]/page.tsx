@@ -41,7 +41,7 @@ export default async function Details({params}:{params:Promise<{id:string}>}) {
           <BidItem key={bid.id} bid={bid}></BidItem>
         ))}
         </div> */}
-        <BidList user={user} auction={data} />
+        <BidList user={user ?? null} auction={data} />
       </div>
 
     </div>

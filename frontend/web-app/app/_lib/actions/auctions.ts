@@ -25,11 +25,11 @@ export async function deleteAuction(id:string) {
     return fetchWrapper.del(`auctions/${id}`)
 }
 
-export async function getBidsForAuction(id:string):Promise<Bid[]>{
+export async function getBidsForAuction(id:string):Promise<Bid[] | {error:{status:number,message:string}}>{
     return fetchWrapper.get(`bids/${id}`)
 }
 
-export async function placeBidForAuction(auctionId:string,amount:number):Promise<Bid>{
+export async function placeBidForAuction(auctionId:string,amount:number):Promise<Bid & {error?:{status:number,message:string}}>{
     return fetchWrapper.post(`bids?auctionId=${auctionId}&amount=${amount}`,{})
 }
 

@@ -22,7 +22,7 @@
   </ItemGroup>
 
  <ItemGroup>
-  <Protobuf Include="Protos\auctions.proto" GrpcServices="Client" PrivateAssets="All"/>
+  <Protobuf Include="protos\auctions.proto" GrpcServices="Client" PrivateAssets="All"/>
 </ItemGroup>
 
 </Project>

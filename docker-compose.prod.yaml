@@ -1,0 +1,215 @@
+# Production deployment for a single VM (e.g. Oracle Cloud Always Free ARM).
+# Usage:  docker compose -f docker-compose.prod.yaml --env-file .env.prod up -d
+#
+# Requires a wildcard-capable DNS name (e.g. DuckDNS) pointing at the VM:
+#   app.<DOMAIN>  -> Next.js frontend
+#   api.<DOMAIN>  -> gateway (YARP)
+#   id.<DOMAIN>   -> identity server
+#
+# Caddy terminates TLS for all three. The network aliases on the caddy service
+# let containers resolve the public hostnames internally (cloud VMs usually
+# cannot hairpin their own public IP).
+
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  mongodb:
+    image: mongo
+    restart: unless-stopped
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+    volumes:
+      - mongodata:/data/db
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mongosh",
+          "--quiet",
+          "127.0.0.1/test",
+          "--eval",
+          "'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)'",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    restart: unless-stopped
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  auction-svc:
+    image: ${DOCKERHUB_USER}/auction-svc:latest
+    build:
+      context: .
+      dockerfile: src/AuctionService/Dockerfile
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - RabbitMq__Host=rabbitmq
+      - RabbitMq__Username=${RABBITMQ_USER}
+      - RabbitMq__Password=${RABBITMQ_PASSWORD}
+      - ConnectionStrings__DefaultConnection=Server=postgres:5432;User Id=postgres;Password=${POSTGRES_PASSWORD};Database=Auction;
+      - IdentityServiceUrl=http://identity-svc
+      - Kestrel__Endpoints__Grpc__Protocols=Http2
+      - Kestrel__Endpoints__Grpc__Url=http://+:7777
+      - Kestrel__Endpoints__WebApi__Protocols=Http1
+      - Kestrel__Endpoints__WebApi__Url=http://+:80
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  search-svc:
+    image: ${DOCKERHUB_USER}/search-svc:latest
+    build:
+      context: .
+      dockerfile: src/SearchService/Dockerfile
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+80
+      - RabbitMq__Host=rabbitmq
+      - RabbitMq__Username=${RABBITMQ_USER}
+      - RabbitMq__Password=${RABBITMQ_PASSWORD}
+      - ConnectionStrings__MongoDbConnection=mongodb://root:${MONGO_PASSWORD}@mongodb:27017/
+      - AuctionServiceUrl=http://auction-svc
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  identity-svc:
+    image: ${DOCKERHUB_USER}/identity-svc:latest
+    build:
+      context: .
+      dockerfile: src/IdentityService/Dockerfile
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+80
+      - IssuerUri=https://id.${DOMAIN}
+      - ClientApp=https://app.${DOMAIN}
+      - ClientSecret=${CLIENT_SECRET}
+      - ConnectionStrings__DefaultConnection=Server=postgres:5432;User Id=postgres;Password=${POSTGRES_PASSWORD};Database=Identity
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  gateway-svc:
+    image: ${DOCKERHUB_USER}/gateway-svc:latest
+    build:
+      context: .
+      dockerfile: src/GatewayService/Dockerfile
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+80
+      - ClientApp=https://app.${DOMAIN}
+
+  bid-svc:
+    image: ${DOCKERHUB_USER}/bid-svc:latest
+    build:
+      context: .
+      dockerfile: src/BiddingService/Dockerfile
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+80
+      - RabbitMq__Host=rabbitmq
+      - RabbitMq__Username=${RABBITMQ_USER}
+      - RabbitMq__Password=${RABBITMQ_PASSWORD}
+      - ConnectionStrings__BidDbConnection=mongodb://root:${MONGO_PASSWORD}@mongodb:27017/
+      - IdentityServiceUrl=http://identity-svc
+      - GrpcAuction=http://auction-svc:7777
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  notify-svc:
+    image: ${DOCKERHUB_USER}/notify-svc:latest
+    build:
+      context: .
+      dockerfile: src/NotificationService/Dockerfile
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+80
+      - RabbitMq__Host=rabbitmq
+      - RabbitMq__Username=${RABBITMQ_USER}
+      - RabbitMq__Password=${RABBITMQ_PASSWORD}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  web-app:
+    image: ${DOCKERHUB_USER}/web-app:latest
+    build:
+      context: ./frontend/web-app
+      args:
+        # Baked into the client bundle at build time.
+        - NEXT_PUBLIC_NOTIFY_URL=https://api.${DOMAIN}/notifications
+    restart: unless-stopped
+    environment:
+      - AUTH_SECRET=${AUTH_SECRET}
+      - AUTH_URL=https://app.${DOMAIN}
+      - AUTH_TRUST_HOST=true
+      - API_URL=http://gateway-svc/
+      - ID_SERVER_ISSUER=https://id.${DOMAIN}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+    depends_on:
+      - gateway-svc
+      - identity-svc
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      - DOMAIN=${DOMAIN}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      default:
+        aliases:
+          # Lets containers reach the public hostnames without hairpin NAT
+          # (e.g. web-app fetching the OIDC discovery document from id.<DOMAIN>).
+          - app.${DOMAIN}
+          - api.${DOMAIN}
+          - id.${DOMAIN}
+
+volumes:
+  pgdata:
+  mongodata:
+  caddy_data:
+  caddy_config:
